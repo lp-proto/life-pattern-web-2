@@ -1,0 +1,36 @@
+<aside class="cookie-banner" data-cookie-banner hidden aria-label="Cookie notice">
+	<div>
+		<h2>Privacy preferences</h2>
+		<p>
+			We use essential cookies to keep the site working and optional analytics to understand what
+			content helps visitors. You can accept optional analytics or keep only essentials.
+		</p>
+	</div>
+	<div class="cookie-actions">
+		<button class="button button-secondary" type="button" data-cookie-choice="essential">
+			Essentials only
+		</button>
+		<button class="button" type="button" data-cookie-choice="accepted">
+			Accept analytics
+		</button>
+	</div>
+</aside>
+
+<script>
+	const banner = document.querySelector("[data-cookie-banner]");
+	const cookieChoiceKey = "lifepattern-cookie-choice";
+
+	if (banner instanceof HTMLElement && !localStorage.getItem(cookieChoiceKey)) {
+		banner.hidden = false;
+	}
+
+	document.querySelectorAll("[data-cookie-choice]").forEach((button) => {
+		button.addEventListener("click", () => {
+			if (!(button instanceof HTMLElement)) return;
+			localStorage.setItem(cookieChoiceKey, button.dataset.cookieChoice ?? "essential");
+			if (banner instanceof HTMLElement) {
+				banner.hidden = true;
+			}
+		});
+	});
+</script>

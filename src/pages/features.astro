@@ -1,0 +1,14 @@
+---
+import FeatureRow from "../components/FeatureRow.astro";
+import Layout from "../components/Layout.astro";
+import { appFeatures } from "../site/content";
+---
+
+<Layout activePage="features">
+	<main class="section">
+		<div class="section-heading">
+			<h1>LifePattern AI Features</h1>
+		</div>
+		{appFeatures.map((feature) => <FeatureRow {...feature} />)}
+	</main>
+</Layout>

@@ -1,0 +1,102 @@
+---
+interface Props {
+	title: string;
+	type: "beta" | "practitioner";
+	successPath: string;
+}
+
+const { title, type, successPath } = Astro.props;
+const recaptchaSiteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY ?? "";
+---
+
+<section class="form-band">
+	<div class="signup-panel">
+		<h1>{title}</h1>
+		<form class="signup-form" data-signup-form data-signup-type={type} data-success-path={successPath}>
+			<div class="form-grid">
+				<label>
+					<span>First Name</span>
+					<input name="firstName" type="text" placeholder="First Name" required />
+				</label>
+				<label>
+					<span>Last Name</span>
+					<input name="lastName" type="text" placeholder="Last Name" required />
+				</label>
+			</div>
+			<label>
+				<span>{type === "practitioner" ? "Business Email" : "Email"}</span>
+				<input name="email" type="email" placeholder="Email" required />
+			</label>
+			{type === "practitioner" && (
+				<>
+					<label>
+						<span>Choose your practice type</span>
+						<select name="practiceType" required>
+							<option value="" disabled selected>Choose a practice type</option>
+							<option value="Chronic Condition">Chronic condition doctors</option>
+							<option value="Mental Health">Mental health practitioners</option>
+							<option value="Physical Therapy">Physical Therapists</option>
+							<option value="Dietician">Dieticians</option>
+							<option value="Fitness Instructor">Fitness Instructors</option>
+							<option value="Life Coach">Life Coaches</option>
+							<option value="Teacher">Teachers</option>
+							<option value="Marriage Counselor">Marriage Counselors</option>
+							<option value="Other">Other</option>
+						</select>
+					</label>
+					<label>
+						<span>Share more information</span>
+						<textarea name="info" rows="4" placeholder="Share more information"></textarea>
+					</label>
+				</>
+			)}
+			<p class="form-status" data-form-status aria-live="polite"></p>
+			<button class="button button-full" type="submit">Sign Up</button>
+		</form>
+	</div>
+</section>
+
+{
+	recaptchaSiteKey && (
+		<script src={`https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`}></script>
+	)
+}
+
+<script define:vars={{ recaptchaSiteKey }}>
+	const forms = document.querySelectorAll("[data-signup-form]");
+	forms.forEach((form) => {
+		form.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			const target = event.currentTarget;
+			if (!(target instanceof HTMLFormElement)) return;
+			const status = target.querySelector("[data-form-status]");
+			const submitButton = target.querySelector("button[type='submit']");
+			if (status) status.textContent = "Submitting...";
+			if (submitButton instanceof HTMLButtonElement) submitButton.disabled = true;
+
+			try {
+				let recaptchaToken = "";
+				if (recaptchaSiteKey && window.grecaptcha) {
+					recaptchaToken = await window.grecaptcha.execute(recaptchaSiteKey, {
+						action: target.dataset.signupType === "practitioner" ? "practitionerSignup" : "betaSignup",
+					});
+				}
+				const payload = Object.fromEntries(new FormData(target).entries());
+				const response = await fetch("/api/signup", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ ...payload, recaptchaToken, type: target.dataset.signupType }),
+				});
+				const result = await response.json();
+				if (!response.ok || result.success === false) {
+					throw new Error(result.message || "Signup failed");
+				}
+				const ref = result?.data?.id ? `?ref=${encodeURIComponent(result.data.id)}` : "";
+				window.location.href = `${target.dataset.successPath}${ref}`;
+			} catch (error) {
+				if (status) status.textContent = error instanceof Error ? error.message : "Signup failed";
+				if (submitButton instanceof HTMLButtonElement) submitButton.disabled = false;
+			}
+		});
+	});
+</script>

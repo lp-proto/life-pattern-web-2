@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /api/
+Disallow: /beta
+Disallow: /beta-thankyou
+Disallow: /practitioner-signup
+Disallow: /practitioner-thankyou
+Disallow: /attributions

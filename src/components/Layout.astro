@@ -1,0 +1,64 @@
+---
+import Header from "./Header.astro";
+import Footer from "./Footer.astro";
+import CookieBanner from "./CookieBanner.astro";
+import { SITE_DESCRIPTION, SITE_LOCALE, SITE_NAME, SITE_TITLE } from "../site/config";
+import "../styles/global.css";
+
+interface Props {
+	title?: string;
+	description?: string;
+	activePage?: "home" | "features" | "practitioners";
+	blankHeader?: boolean;
+	hideFooter?: boolean;
+}
+
+const {
+	title = SITE_TITLE,
+	description = SITE_DESCRIPTION,
+	activePage,
+	blankHeader = false,
+	hideFooter = false,
+} = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+---
+
+<!doctype html>
+<html lang={SITE_LOCALE}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="icon" href="/favicon.ico?v=2" />
+		<link rel="canonical" href={canonicalURL} />
+		<title>{title}</title>
+		<meta name="title" content={title} />
+		<meta name="description" content={description} />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:locale" content={SITE_LOCALE} />
+		<meta property="og:site_name" content={SITE_NAME} />
+		<meta name="twitter:card" content="summary_large_image" />
+	</head>
+	<body>
+		<Header activePage={activePage} blank={blankHeader} />
+		<slot />
+		{!hideFooter && <Footer />}
+		<CookieBanner />
+		<script>
+			const header = document.querySelector("[data-site-header]");
+			const updateHeader = () => {
+				if (!(header instanceof HTMLElement)) return;
+				const opacity = Math.min(Math.floor(window.scrollY / 10) / 10, 0.9);
+				header.style.backgroundColor = `rgba(255, 255, 255, ${opacity})`;
+				header.classList.toggle("is-shadowed", opacity > 0.5);
+			};
+			updateHeader();
+			window.addEventListener("scroll", updateHeader, { passive: true });
+		</script>
+	</body>
+</html>

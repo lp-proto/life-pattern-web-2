@@ -1,0 +1,41 @@
+---
+import FeatureRow from "../components/FeatureRow.astro";
+import Layout from "../components/Layout.astro";
+import { practitionerFeatures } from "../site/content";
+---
+
+<Layout activePage="practitioners">
+	<main>
+		<section class="section">
+			<div class="cta-banner">
+				<div>
+					<h1>LifePattern AI is a tool for practices that support treatment over time.</h1>
+					<div class="practice-lists">
+						<ul>
+							<li>Chronic condition doctors</li>
+							<li>Mental health practitioners</li>
+							<li>Physical therapists</li>
+							<li>Rehabilitation practitioners</li>
+							<li>Dieticians</li>
+						</ul>
+						<ul>
+							<li>Fitness instructors</li>
+							<li>Life and work coaches</li>
+							<li>Marriage counselors</li>
+							<li>Teachers</li>
+							<li>And more...</li>
+						</ul>
+					</div>
+				</div>
+				<a class="button" href="/practitioner-signup">Sign up as a practitioner</a>
+			</div>
+		</section>
+
+		<section class="section section-compact">
+			<div class="section-heading">
+				<h2>How LifePattern AI can help you and your practice?</h2>
+			</div>
+			{practitionerFeatures.map((feature) => <FeatureRow {...feature} />)}
+		</section>
+	</main>
+</Layout>
