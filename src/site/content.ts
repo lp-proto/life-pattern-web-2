@@ -17,7 +17,7 @@ export const howItWorks: Feature[] = [
 	{
 		title: "Journal and extract insights",
 		description:
-			"With our Patent Pending advanced AI large language models, LifePattern AI extracts details from your journal entries about food, activities, mood, symptoms, and more. Capturing a panoramic view of your life.",
+			"With patented AI technology, LifePattern AI extracts details from your journal entries about food, activities, mood, symptoms, and more, capturing a panoramic view of your life.",
 		image: "/assets/Creative Writing Amico.svg",
 		imageAlt: "Extract insights from your journal",
 		reverse: true,

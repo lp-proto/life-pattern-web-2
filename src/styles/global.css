@@ -464,6 +464,12 @@ textarea {
 	font-size: 0.875rem;
 }
 
+.patent-note {
+	max-width: 760px;
+	font-size: 0.8125rem;
+	line-height: 1.5;
+}
+
 .cookie-banner {
 	position: fixed;
 	right: 24px;
